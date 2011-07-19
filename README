@@ -1,0 +1,22 @@
+This project requires a module in the root directory named "settings" which
+defines the values of CLIENT_ID and CLIENT_SECRET on the module level as
+strings representing the OAuth credentials of the program requesting access.
+The CLIENT_ID variable should not include the suffix of
+".apps.googleusercontent.com".
+
+If you have any questions about the code please contact
+google-tasks-takeout@googlegroups.com.
+
+Remember: this project requires Google App Engine to run.  If you want to
+host your own copy on App Engine you will need to modify the application ID in
+app.yaml and then use your App Engine SDK to upload it.
+
+google-api-python-client retrieved from: http://code.google.com/p/google-api-python-client/
+on: June 7, 2011
+version: 1.0beta2
+consisting of: apiclient, httplib2, oauth2client, uritemplate
+
+icalendar retrieved from: http://codespeak.net/icalendar/
+on: June 14, 2011
+version: 1.2
+consisting of: icalendar
