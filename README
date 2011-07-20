@@ -5,7 +5,7 @@ The CLIENT_ID variable should not include the suffix of
 ".apps.googleusercontent.com".
 
 If you have any questions about the code please contact
-google-tasks-takeout@googlegroups.com.
+google-tasks-porter@googlegroups.com.
 
 Remember: this project requires Google App Engine to run.  If you want to
 host your own copy on App Engine you will need to modify the application ID in

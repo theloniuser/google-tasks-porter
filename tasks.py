@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Main web application handler for Google Tasks Takeout."""
+"""Main web application handler for Google Tasks Porter."""
 
 __author__ = "dwightguth@google.com (Dwight Guth)"
 
@@ -43,8 +43,8 @@ def _RedirectForOAuth(self, user):
       client_id=settings.CLIENT_ID + ".apps.googleusercontent.com",
       client_secret=settings.CLIENT_SECRET,
       scope="https://www.googleapis.com/auth/tasks",
-      user_agent="task-takeout/1.0",
-      xoauth_displayname="Google Tasks Takeout",
+      user_agent="task-porter/1.0",
+      xoauth_displayname="Google Tasks Porter",
       state=self.request.path_qs)
 
   callback = self.request.relative_url("/oauth2callback")

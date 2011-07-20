@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Google Tasks Takeout configuration file."""
+"""Google Tasks Porter configuration file."""
 
 __author__ = "dwightguth@google.com (Dwight Guth)"
 

@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-application: google-tasks-takeout
+application: tasks-takeout
 version: 1
 runtime: python
 api_version: 1
 
 handlers:
-- url: /takeout.css
-  static_files: takeout.css
-  upload: takeout.css
+- url: /porter.css
+  static_files: porter.css
+  upload: porter.css
   mime_type: text/css
   secure: always
 
