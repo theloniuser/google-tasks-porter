@@ -21,8 +21,8 @@ __author__ = "dwightguth@google.com (Dwight Guth)"
 import os
 import pickle
 
-from oauth2client import appengine
-from oauth2client import client
+from apiclient.oauth2client import appengine
+from apiclient.oauth2client import client
 
 from google.appengine.api import mail
 from google.appengine.api import memcache

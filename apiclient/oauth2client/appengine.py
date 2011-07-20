@@ -31,7 +31,7 @@ class FlowProperty(db.Property):
   """App Engine datastore Property for Flow.
 
   Utility property that allows easy storage and retreival of an
-  oauth2client.Flow"""
+  apiclient.oauth2client.Flow"""
 
   # Tell what the user type is.
   data_type = Flow
@@ -118,7 +118,7 @@ class StorageByKeyName(Storage):
     """Retrieve Credential from datastore.
 
     Returns:
-      oauth2client.Credentials
+      apiclient.oauth2client.Credentials
     """
     entity = self._model.get_or_insert(self._key_name)
     credential = getattr(entity, self._property_name)

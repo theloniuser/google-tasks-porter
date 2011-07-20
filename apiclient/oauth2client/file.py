@@ -37,7 +37,7 @@ class Storage(BaseStorage):
     """Retrieve Credential from file.
 
     Returns:
-      oauth2client.client.Credentials
+      apiclient.oauth2client.client.Credentials
     """
     self._lock.acquire()
     try:

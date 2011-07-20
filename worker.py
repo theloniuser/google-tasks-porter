@@ -21,7 +21,7 @@ __author__ = "dwightguth@google.com (Dwight Guth)"
 import logging
 
 from apiclient import discovery
-from oauth2client import appengine
+from apiclient.oauth2client import appengine
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util

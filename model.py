@@ -16,7 +16,7 @@
 
 """Represents the App Engine model of Google Tasks data in the datastore."""
 
-from oauth2client import appengine
+from apiclient.oauth2client import appengine
 
 from google.appengine.ext import db
 

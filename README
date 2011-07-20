@@ -11,6 +11,10 @@ Remember: this project requires Google App Engine to run.  If you want to
 host your own copy on App Engine you will need to modify the application ID in
 app.yaml and then use your App Engine SDK to upload it.
 
+Note: The oauth2client package was moved into the apiclient directory in order
+to fix the weird pickle error. See
+http://groups.google.com/group/google-appengine/browse_thread/thread/3d56681cb27b18cc/8ca673403a784680
+
 google-api-python-client retrieved from: http://code.google.com/p/google-api-python-client/
 on: June 7, 2011
 version: 1.0beta2

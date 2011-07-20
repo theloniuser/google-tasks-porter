@@ -20,12 +20,12 @@ the Django datastore.
 
 __author__ = 'jcgregorio@google.com (Joe Gregorio)'
 
-import oauth2client
+import apiclient.oauth2client
 import base64
 import pickle
 
 from django.db import models
-from oauth2client.client import Storage as BaseStorage
+from apiclient.oauth2client.client import Storage as BaseStorage
 
 class CredentialsField(models.Field):
 
@@ -37,7 +37,7 @@ class CredentialsField(models.Field):
   def to_python(self, value):
     if not value:
       return None
-    if isinstance(value, oauth2client.client.Credentials):
+    if isinstance(value, apiclient.oauth2client.client.Credentials):
       return value
     return pickle.loads(base64.b64decode(value))
 
@@ -55,7 +55,7 @@ class FlowField(models.Field):
   def to_python(self, value):
     if value is None:
       return None
-    if isinstance(value, oauth2client.client.Flow):
+    if isinstance(value, apiclient.oauth2client.client.Flow):
       return value
     return pickle.loads(base64.b64decode(value))
 
@@ -90,7 +90,7 @@ class Storage(BaseStorage):
     """Retrieve Credential from datastore.
 
     Returns:
-      oauth2client.Credentials
+      apiclient.oauth2client.Credentials
     """
     credential = None
 
