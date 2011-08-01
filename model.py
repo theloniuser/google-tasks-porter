@@ -39,7 +39,7 @@ class TaskList(db.Model):
   """The datastore entity for a list of tasks."""
 
   id = db.StringProperty()
-  title = db.StringProperty()  #CATEGORIES/Categories
+  title = db.TextProperty()  #CATEGORIES/Categories
   selfLink = db.LinkProperty()
 
 
@@ -49,7 +49,7 @@ class Task(db.Model):
   parent_entity = db.ReferenceProperty(TaskList, collection_name="tasks")
   id = db.StringProperty()  #UID
   selfLink = db.LinkProperty()
-  title = db.StringProperty()  #SUMMARY/Subject
+  title = db.TextProperty()  #SUMMARY/Subject
   notes = db.TextProperty()  #DESCRIPTION/Notes
   parent_ = db.SelfReferenceProperty(collection_name="children")
   position = db.StringProperty()
