@@ -21,6 +21,8 @@ from django.utils import html
 from django.utils import safestring
 from google.appengine.ext import webapp
 
+import logging
+
 register = webapp.template.create_template_register()
 
 
