@@ -46,7 +46,7 @@ This is the Django template for importing tasks.
   {% endfor %}
   </ul></p>
   {% endif %}
-  <form enctype="multipart/form-data" method="POST" action="/import">
+  <form enctype="multipart/form-data" method="POST" action="{{ upload_url }}">
     <table>
       <tr>
         <td><label for="name">Task List Name:</label></td>

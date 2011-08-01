@@ -23,6 +23,7 @@ import logging
 from apiclient import discovery
 from apiclient.oauth2client import appengine
 
+from google.appengine.ext import blobstore
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
@@ -108,12 +109,18 @@ class ImportWorker(webapp.RequestHandler):
         tasklist.title = self.request.get("name")
         tasklist.put()
 
+        blob_info = blobstore.BlobInfo.get(self.request.get("file"))
+        blob_reader = blob_info.open()
+        blob = blob_reader.read()
+        blob_reader.close()
+        blob_info.delete()
+
         if self.request.get("format") == "ics":
           parser = icalparse.Parser(tasklist)
-          tasks_list = parser.ParseAndStore(self.request.get("file"))
+          tasks_list = parser.ParseAndStore(blob)
         elif self.request.get("format") == "csv":
           parser = csvparse.Parser(tasklist)
-          tasks_list = parser.ParseAndStore(self.request.get("file"))
+          tasks_list = parser.ParseAndStore(blob)
         else:
           tasks_list = []
 
