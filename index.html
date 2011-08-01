@@ -1,0 +1,117 @@
+{% comment %}
+Copyright 2011 Google Inc.  All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+This is the Django template for the landing page.
+{% endcomment %}
+<!doctype html>
+<html>
+<head>
+  <title>Google Tasks Porter</title>
+  <link rel="stylesheet" type="text/css" href="/porter.css"></link>
+  <script type="text/javascript">
+    function save() {
+      window.location.href = "/snapshot";
+    }
+
+    function restore() {
+      window.location.href = "/snapshots";
+    }
+
+    function authorize() {
+      window.location.href = "/auth";
+    }
+
+    function import() {
+      window.location.href = "/import";
+    }
+  </script>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-24775214-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</head>
+<body>
+
+<div class="logo break">
+  <table>
+    <tr>
+      <td valign="top" style="padding-top: 5px;">
+        <img src="/logo.png" with="120" height="120" />
+      </td>
+      <td class="product-desc">
+        <div class="break">
+          Google Tasks Porter lets you save multiple "snapshots" of your Google
+          Tasks data, and download them in iCalendar, Outlook, and Remember The
+          Milk formats.  It also allows you to upload tasks exported from
+          iCalendar or Outlook.
+        </div>
+        <div class="break">
+          {% if is_authorized %}
+          Thanks for granting us permission.  Don't worry: you can always
+          <a href="https://www.google.com/accounts/IssuedAuthSubTokens">revoke</a>
+          this permission at any time.
+          {% else %}
+          In order to do this, it asks for permission to view and manage your
+          Google Tasks data.  Don't worry: you can always revoke this permission
+          later.  We will not modify any of your pre-existing task lists.
+          {% endif %}
+        </div>
+        {% if is_authorized %}
+        <div class="break">
+          Choose what you'd like to do below.
+        </div>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="break">
+  {% if is_authorized %}
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td class="button-left">
+        <button class="button" type="button" onclick="save();">Take Snapshot</button>
+      </td>
+      <td class="button-middle">
+        <button class="button" type="button" onclick="import();">Import
+          Tasks</button>
+      <td class="button-right">
+        <button class="button" type="button" onclick="restore();">View Snapshots</button>
+      </td>
+    </tr>
+  </table>
+  {% else %}
+  <button class="button" type="button" onclick="authorize();">Authorize</button>
+  {% endif %}
+</div>
+
+<div class="break"></div>
+<div class="footer">
+  Questions?  Email <a href="mailto:google-tasks-porter@googlegroups.com">
+    google-tasks-porter@googlegroups.com</a>
+  <br>
+  Source code for this project can be found
+  <a href="http://code.google.com/p/google-tasks-porter/">here</a>
+</div>
+</body>
+</html>

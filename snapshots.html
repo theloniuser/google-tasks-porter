@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% comment %}
+Copyright 2011 Google Inc.  All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+This is the Django template for the snapshots listing page.
+{% endcomment %}
+{% block title %}Snapshots{% endblock %}
+{% block head %}
+{% if refresh %}
+<meta http-equiv="refresh" content="10">
+{% endif %}
+{% endblock %}
+{% block heading %}Your snapshots are listed below{% endblock %}
+
+{% block body %}
+<div class="break">
+  {% if error == "DELETE_BUILDING" %}
+  <p>You cannot delete a snapshot until it is done building.</p>
+  {% endif %}
+  <ul>
+    {% if snapshots %}
+    {% for snapshot, task_count, tasklist_count in snapshots %}
+      {% if snapshot.status == "completed" %}
+      <li>{{ snapshot.timestamp|date:"m/d/Y h:i:s a \U\T\C" }},
+      {{ tasklist_count }} task lists, {{ task_count }} tasks<br/>
+      (<a href="/download?id={{ snapshot.key.id }}&amp;format=html">HTML with
+        microformat</a>,
+       <a href="/download?id={{ snapshot.key.id }}&amp;format=ics">iCalendar</a>,
+       <a href="/download?id={{ snapshot.key.id }}&amp;format=csv">Outlook</a>,
+       <a href="/sendmail?id={{ snapshot.key.id }}">
+         Remember the Milk</a>)
+        <a href="/delete?id={{ snapshot.key.id }}">[x]</a></li>
+      {% endif %}{% if snapshot.status == "error" %}
+      <li>{{ snapshot.timestamp|date:"m/d/Y h:i:s a \U\T\C" }}<br/>ERROR:
+      {{ snapshot.errorMessage }}
+      <a href="/delete?id={{ snapshot.key.id }}">[x]</a></li>
+      {% endif %}{% if snapshot.status == "building" %}
+      <li>{{ snapshot.timestamp|date:"m/d/Y h:i:s a \U\T\C" }}<br/>Building...</li>
+      {% endif %}
+      {% endfor %}
+    {% else %}
+      You have not taken any snapshots.  You can only download a snapshot after
+      you have <a href="/snapshot">taken a snapshot</a>.
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}
