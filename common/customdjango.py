@@ -193,6 +193,12 @@ class RecurseNode(template.Node):
 
     return self.RenderList(context, item_list)
 
+  def getParent(self, item):
+    try:
+      return getattr(item, self.parent)
+    except BaseExecption:
+      return None
+
   def RenderList(self, context, item_list):
     """Renders a single recursion level in the specified context.
 
