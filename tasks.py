@@ -369,6 +369,9 @@ class OAuthHandler(webapp.RequestHandler):
 
   def get(self):
     """Handles GET requests for /oauth2callback."""
+    if self.request.get("error"):
+      self.redirect("/")
+      return
     user = users.get_current_user()
     flow = pickle.loads(memcache.get(user.user_id()))
     if flow:
