@@ -196,7 +196,8 @@ class RecurseNode(template.Node):
   def getParent(self, item):
     try:
       return getattr(item, self.parent)
-    except BaseExecption:
+    except BaseException, e:
+      logging.warning(e)
       return None
 
   def RenderList(self, context, item_list):
