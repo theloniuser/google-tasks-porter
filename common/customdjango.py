@@ -150,9 +150,9 @@ class RecurseNode(template.Node):
   def __init__(self, item_name, kwargs, nodes):
     self.item_name = item_name
     self.root = template.Variable(kwargs["root"])
-    self.parent = template.Variable(kwargs["parent"])
-    self.children = template.Variable(kwargs["children"])
-    self.sort = template.Variable(kwargs["sort"])
+    self.parent = kwargs["parent"]
+    self.children = kwargs["children"]
+    self.sort = kwargs["sort"]
     self.nodes = nodes
     for children_node in nodes.get_nodes_by_type(ChildrenNode):
       children_node.recurse_node = self
@@ -167,8 +167,8 @@ class RecurseNode(template.Node):
     Returns:
       the result of calling cmp on x and y's sort values.
     """
-    x_sort = self.sort.resolve(x)
-    y_sort = self.sort.resolve(y)
+    x_sort = getattr(x, self.sort)
+    y_sort = getattr(y, self.sort)
     return cmp(x_sort, y_sort)
 
   def render(self, context):
@@ -189,7 +189,7 @@ class RecurseNode(template.Node):
     else:
       item_list = sorted(self.root.resolve(context), self.cmp)
       item_list = [item for item in item_list
-                   if self.parent.resolve(item) is None]
+                   if getattr(item, self.parent) is None]
 
     return self.RenderList(context, item_list)
 
@@ -212,7 +212,7 @@ class RecurseNode(template.Node):
       context.push()
       context[self.item_name] = item
       try:
-        children_items = list(self.children.resolve(item))
+        children_items = list(getattr(item, self.children))
         context["haschildren"] = bool(children_items)
       except template.VariableDoesNotExist:
         children_items = None
