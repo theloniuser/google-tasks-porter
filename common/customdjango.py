@@ -39,6 +39,8 @@ def replace(str_to_replace, args):
   Returns:
     The string with the specified replacement.
   """
+  if str_to_replace is None:
+    return None
   search_str = args.split(args[0])[1]
   replace_str = args.split(args[0])[2]
   return str_to_replace.replace(search_str, replace_str)
@@ -54,6 +56,8 @@ def replacenewline(str_to_replace):
   Returns:
     The string with newlines escaped.
   """
+  if str_to_replace is None:
+    return None
   return str_to_replace.replace(
       "\r\n", "\\n").replace("\r", "\\n").replace("\n", "\\n")
 
@@ -69,6 +73,8 @@ def replacenewlinebr(str_to_replace, autoescape=None):
   Returns:
     The string with newlines converted to <br/> tags.
   """
+  if str_to_replace is None:
+    return None
   if autoescape:
     esc = html.conditional_escape
   else:
@@ -92,6 +98,8 @@ def replacecsv(str_to_replace):
   Returns:
     The string escaped for Windows CSV.
   """
+  if str_to_replace is None:
+    return None
   return str_to_replace.replace("\"", "\"\"").replace("\n", "\r\n")
 
 
