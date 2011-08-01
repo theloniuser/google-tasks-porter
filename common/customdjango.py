@@ -189,7 +189,7 @@ class RecurseNode(template.Node):
     else:
       item_list = sorted(self.root.resolve(context), self.cmp)
       item_list = [item for item in item_list
-                   if getattr(item, self.parent) is None]
+                   if self.getParent(item) is None]
 
     return self.RenderList(context, item_list)
 
