@@ -28,9 +28,7 @@ from google.appengine.api import mail
 from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 from google.appengine.api import users
-from google.appengine.ext import blobstore
 from google.appengine.ext import webapp
-from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp import util
 
@@ -274,16 +272,11 @@ class ImportHandler(webapp.RequestHandler):
 
       template_values = {"snapshots": titles,
                          "error": self.request.get("error"),
-                         "refresh": refresh,
-                         "upload_url": blobstore.create_upload_url("/upload")}
+                         "refresh": refresh}
       self.response.out.write(template.render(path, template_values))
 
-
-class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
-  """Handler for /upload."""
-
   def post(self):
-    """Handles POST requests for /upload.
+    """Handles POST requests for /import.
 
     This handler takes the following query parameters:
       name: The name of the tasklist to create and put the imported tasks into.
@@ -304,7 +297,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     snapshot.put()
 
     taskqueue.add(url="/worker/import",
-                  params={"file": self.get_uploads("file")[0].key(),
+                  params={"file": self.request.get("file"),
                           "name": self.request.get("name"),
                           "format": self.request.get("format"),
                           "id": snapshot.key().id()})
@@ -398,7 +391,6 @@ def main():
           ("/delete", DeleteHandler),
           ("/download", DownloadHandler),
           ("/import", ImportHandler),
-          ("/upload", UploadHandler),
           ("/oauth2callback", OAuthHandler),
           ("/sendmail", SendMailHandler),
           ("/snapshot", SnapshotHandler),
