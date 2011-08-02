@@ -79,7 +79,7 @@ class SnapshotWorker(webapp.RequestHandler):
       except Exception, e:
         snapshot.status = "error"
         snapshot.errorMessage = "Snapshot creation process failed unexpectedly."
-        logging.error(e)
+        logging.error(e, exc_info=True)
         snapshot.put()
 
 
