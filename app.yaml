@@ -35,6 +35,11 @@ handlers:
   login: admin
   secure: always
 
+- url: /upload
+  script: blobstore.py
+  login: optional
+  secure: always
+
 - url: /.*
   script: tasks.py
   login: required

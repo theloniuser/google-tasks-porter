@@ -297,6 +297,9 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         not self.request.get("format")):
       self.redirect("/import?error=REQUIRED_FIELD")
       return
+    if not users.get_current_user():
+      self.redirect("/import")
+      return
     snapshot = model.Snapshot()
     snapshot.type = "import"
     snapshot.user = users.get_current_user()
