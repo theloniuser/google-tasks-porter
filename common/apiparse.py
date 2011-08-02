@@ -139,7 +139,6 @@ class Parser(object):
     Returns:
       The list of entities created from that page of data.
     """
-    logging.info(api_data)
     page = []
     if "items" in api_data:
       l = api_data["items"]
