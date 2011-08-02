@@ -29,6 +29,12 @@ This is the Django template for the snapshots listing page.
   {% if error == "DELETE_BUILDING" %}
   <p>You cannot delete a snapshot until it is done building.</p>
   {% endif %}
+  {% if error == "NO_ID_EXPORT" %}
+  <p>You must specify a snapshot in order to export it.</p>
+  {% endif %}
+  {% if error == "NO_ID_DELETE" %}
+  <p>You must specify a snapshot in order to delete it.</p>
+  {% endif %}
   <ul>
     {% if snapshots %}
     {% for snapshot, task_count, tasklist_count in snapshots %}
