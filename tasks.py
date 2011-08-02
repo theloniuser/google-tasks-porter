@@ -20,6 +20,7 @@ __author__ = "dwightguth@google.com (Dwight Guth)"
 
 import os
 import pickle
+import urllib
 
 from apiclient.oauth2client import appengine
 from apiclient.oauth2client import client
@@ -158,6 +159,9 @@ class DeleteHandler(webapp.RequestHandler):
     if not credentials or credentials.invalid:
       self.redirect("/snapshots")
     else:
+      if not self.request.get("id"):
+        self.redirect("/snapshots?error=NO_ID_DELETE")
+        return
       snapshot = model.Snapshot.gql("WHERE user = :user "
                                     "AND __key__ = KEY('Snapshot', :key)",
                                     user=user,
@@ -204,6 +208,9 @@ class DownloadHandler(webapp.RequestHandler):
     if not credentials or credentials.invalid:
       self.redirect("/snapshots")
     else:
+      if not self.request.get("id"):
+        self.redirect("/snapshots?error=NO_ID_EXPORT")
+        return
       snapshot = model.Snapshot.gql("WHERE user = :user "
                                     "AND __key__ = KEY('Snapshot', :key)",
                                     user=user,
@@ -332,12 +339,12 @@ class SendMailHandler(webapp.RequestHandler):
       _RedirectForOAuth(self, user)
     else:
       if not self.request.get("id"):
-        self.redirect("/snapshots?error=NO_ID")
+        self.redirect("/snapshots?error=NO_ID_EXPORT")
         return
       if (not self.request.get("email") or
           not self.request.get("subject")):
         self.redirect("/sendmail?id=%s&error=REQUIRED_FIELD" %
-                      self.request.get("id"))
+                      urllib.quote_plus(self.request.get("id")))
         return
 
       snapshot = model.Snapshot.gql("WHERE user = :user "
