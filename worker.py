@@ -109,11 +109,25 @@ class ImportWorker(webapp.RequestHandler):
         tasklist.put()
 
         if self.request.get("format") == "ics":
-          parser = icalparse.Parser(tasklist)
-          tasks_list = parser.ParseAndStore(self.request.get("file"))
+          try:
+            parser = icalparse.Parser(tasklist)
+            tasks_list = parser.ParseAndStore(self.request.get("file"))
+          except Exception, e:
+            snapshot.status = "error"
+            snapshot.errorMessage = "The iCalendar file was malformed."
+            logging.info(e, exc_info=True)
+            snapshot.put()
+            return
         elif self.request.get("format") == "csv":
-          parser = csvparse.Parser(tasklist)
-          tasks_list = parser.ParseAndStore(self.request.get("file"))
+          try:
+            parser = csvparse.Parser(tasklist)
+            tasks_list = parser.ParseAndStore(self.request.get("file"))
+          except Exception, e:
+            snapshot.status = "error"
+            snapshot.errorMessage = "The CSV file was malformed."
+            logging.info(e, exc_info=True)
+            snapshot.put()
+            return
         else:
           tasks_list = []
 
@@ -130,7 +144,7 @@ class ImportWorker(webapp.RequestHandler):
       except Exception, e:
         snapshot.status = "error"
         snapshot.errorMessage = "Snapshot creation process failed unexpectedly."
-        logging.error(e)
+        logging.error(e, exc_info=True)
         snapshot.put()
 
 
