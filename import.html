@@ -26,6 +26,10 @@ This is the Django template for importing tasks.
 
 {% block body %}
 <div class="break">
+  <p>Please note that at this time we support a maximum file size of 100 KB.  If
+  you need to upload a larger quantity of data than that allows, we recommend
+  that you break it down into groups based on some sort of category and upload
+  the files separately.</p>
   {% if error == "REQUIRED_FIELD" %}
   <p>You must fill out the form in order to import tasks.</p>
   {% endif %}
