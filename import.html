@@ -29,9 +29,6 @@ This is the Django template for importing tasks.
   {% if error == "REQUIRED_FIELD" %}
   <p>You must fill out the form in order to import tasks.</p>
   {% endif %}
-  {% if error == "NOT_LOGGED_IN" %}
-  <p>You must be logged in when you attempt to import tasks.</p>
-  {% endif %}
   {% if snapshots %}
   <p>Import Status:
   <ul>
