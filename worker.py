@@ -23,6 +23,7 @@ import logging
 from apiclient import discovery
 from apiclient.oauth2client import appengine
 
+from google.appengine.api import apiproxy_stub_map
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
@@ -33,6 +34,13 @@ from common import apiupload
 import csvparse
 import icalparse
 import model
+
+
+def urlfetch_timeout_hook(service, call, request, response):
+  if call != 'Fetch':
+    return  # Make the default deadline 10 seconds instead of 5.
+  if not request.has_deadline():
+    request.set_deadline(30.0)
 
 
 class SnapshotWorker(webapp.RequestHandler):
@@ -149,6 +157,8 @@ class ImportWorker(webapp.RequestHandler):
 
 
 def main():
+  apiproxy_stub_map.apiproxy.GetPreCallHooks().Append(
+      'urlfetch_timeout_hook', urlfetch_timeout_hook, 'urlfetch')
   application = webapp.WSGIApplication(
       [
           ("/worker/snapshot", SnapshotWorker),
