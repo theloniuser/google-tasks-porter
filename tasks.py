@@ -369,7 +369,7 @@ class OAuthHandler(webapp.RequestHandler):
 
   def get(self):
     """Handles GET requests for /oauth2callback."""
-    if self.request.get("error"):
+    if not self.request.get("code"):
       self.redirect("/")
       return
     user = users.get_current_user()
