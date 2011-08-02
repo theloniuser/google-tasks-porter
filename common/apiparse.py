@@ -79,6 +79,8 @@ class Parser(object):
     if ("items" not in api_data and "entry" not in api_data and not
         isinstance(api_data, list)):
       # top level is a record itself
+      if not [item for item in api_data if item != "kind" and item != "etag"]:
+        return []
       return self.ParseItem(api_data, self.entity_to_parse, self.parent_entity)
 
     if self.index:
@@ -146,6 +148,9 @@ class Parser(object):
       l = api_data["entry"]
     elif isinstance(api_data, list):
       l = api_data
+    else:
+      # page is empty
+      l = []
     for item in l:
       page.append(self.ParseItem(item, self.entity_to_parse,
                                  self.parent_entity))
