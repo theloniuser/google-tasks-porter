@@ -23,6 +23,7 @@ Apiary API and convert it into entities in the datastore.
 __author__ = "dwightguth@google.com (Dwight Guth)"
 
 import datetime
+import logging
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
 
@@ -138,6 +139,7 @@ class Parser(object):
     Returns:
       The list of entities created from that page of data.
     """
+    logging.info(api_data)
     page = []
     if "items" in api_data:
       l = api_data["items"]
@@ -168,6 +170,7 @@ class Parser(object):
       model_obj = entity_to_parse(parent=self.snapshot,
                                   key_name=str(item["id"]))
     else:
+      logging.warning("no id: %s" % item)
       model_obj = entity_to_parse(parent=self.snapshot)
     model_obj.put()
     if parent_entity:
