@@ -38,9 +38,34 @@ import model
 
 def urlfetch_timeout_hook(service, call, request, response):
   if call != 'Fetch':
-    return  # Make the default deadline 10 seconds instead of 5.
+    return
+
+  # Make the default deadline 30 seconds instead of 5.
   if not request.has_deadline():
     request.set_deadline(30.0)
+
+
+class DeleteWorker(webapp.RequestHandler):
+  """Handler for /worker/delete."""
+
+  def post(self):
+    """Handles POST requests for /worker/delete."""
+    snapshot = model.Snapshot.gql("WHERE __key__ = KEY('Snapshot', :key)",
+                                  key=int(self.request.get("id"))).get()
+
+    task_entities = model.Task.gql("WHERE ANCESTOR IS :id",
+                                   id=snapshot.key())
+
+    for ent in task_entities:
+      ent.delete()
+
+    tasklist_entities = model.TaskList.gql("WHERE ANCESTOR IS :id",
+                                           id=snapshot.key())
+
+    for ent in tasklist_entities:
+      ent.delete()
+
+    snapshot.delete()
 
 
 class SnapshotWorker(webapp.RequestHandler):
@@ -95,6 +120,8 @@ class ImportWorker(webapp.RequestHandler):
   """Handler for /worker/import."""
 
   def post(self):
+    logging.info(self.request.get("id"))
+
     """Handles POST requests for /worker/snapshot."""
     snapshot = model.Snapshot.gql("WHERE __key__ = KEY('Snapshot', :key)",
                                   key=int(self.request.get("id"))).get()
@@ -161,8 +188,9 @@ def main():
       'urlfetch_timeout_hook', urlfetch_timeout_hook, 'urlfetch')
   application = webapp.WSGIApplication(
       [
+          ("/worker/delete", DeleteWorker),
+          ("/worker/import", ImportWorker),
           ("/worker/snapshot", SnapshotWorker),
-          ("/worker/import", ImportWorker)
       ])
   util.run_wsgi_app(application)
 
