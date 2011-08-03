@@ -31,7 +31,10 @@ This is the Django template for importing tasks.
   that you break it down into groups based on some sort of category and upload
   the files separately.</p>
   {% if error == "REQUIRED_FIELD" %}
-  <p>You must fill out the form in order to import tasks.</p>
+  <p><b>You must fill out the form in order to import tasks.</b></p>
+  {% endif %}
+  {% if error == "FILE_TOO_LARGE" %}
+  <p><b>File is larger than 100 KB.</b></p>
   {% endif %}
   {% if snapshots %}
   <p>Import Status:

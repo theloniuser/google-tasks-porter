@@ -22,8 +22,8 @@ This is the Django template for sending emails to Remember the Milk.
 {% block body %}
 <div class="break">
   {% if error == "REQUIRED_FIELD" %}
-  <p>You must fill out the form in order to send an import email to
-  Remember the Milk.</p>
+  <p><b>You must fill out the form in order to send an import email to
+    Remember the Milk.</b></p>
   {% endif %}
   <form method="POST" action="/sendmail">
     <table>
