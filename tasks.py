@@ -18,6 +18,7 @@
 
 __author__ = "dwightguth@google.com (Dwight Guth)"
 
+import logging
 import os
 import pickle
 import urllib
@@ -303,11 +304,17 @@ class ImportHandler(webapp.RequestHandler):
     snapshot.status = "building"
     snapshot.put()
 
-    taskqueue.add(url="/worker/import",
-                  params={"file": self.request.get("file"),
-                          "name": self.request.get("name"),
-                          "format": self.request.get("format"),
-                          "id": snapshot.key().id()})
+    try:
+      taskqueue.add(url="/worker/import",
+                    params={"file": self.request.get("file"),
+                            "name": self.request.get("name"),
+                            "format": self.request.get("format"),
+                            "id": snapshot.key().id()})
+    except taskqueue.TaskTooLargeError, e:
+      logging.info(e, exc_info=True)
+      self.redirect("/import?error=FILE_TOO_LARGE")
+      return
+
     self.redirect("/import")
 
 
