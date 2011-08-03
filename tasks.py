@@ -123,7 +123,7 @@ class ListHandler(webapp.RequestHandler):
         counts.append((snapshot, task_count, tasklist_count))
 
       template_values = {"snapshots": counts,
-                         "error": self.request.get("error"),
+                         "msg": self.request.get("msg"),
                          "refresh": refresh,
                          "logout_url": users.create_logout_url("/snapshots")}
       self.response.out.write(template.render(path, template_values))
@@ -160,40 +160,35 @@ class DeleteHandler(webapp.RequestHandler):
     """Handles GET requests for /delete."""
     user, credentials = _GetCredentials()
 
+    if self.request.get("import"):
+      url = "/import"
+    else:
+      url = "/snapshots"
+
     if not credentials or credentials.invalid:
-      self.redirect("/snapshots")
+      self.redirect(url)
     else:
       if not self.request.get("id"):
-        self.redirect("/snapshots?error=NO_ID_DELETE")
+        self.redirect(url + "?msg=NO_ID_DELETE")
         return
+
       snapshot = model.Snapshot.gql("WHERE user = :user "
                                     "AND __key__ = KEY('Snapshot', :key)",
                                     user=user,
                                     key=int(self.request.get("id"))).get()
 
-      if snapshot.status == "building":
-        # can't delete until snapshot is done
-        self.redirect("/snapshots?error=DELETE_BUILDING")
+      if snapshot is None:
+        self.redirect(url + "?msg=INVALID_SNAPSHOT")
         return
 
-      task_entities = model.Task.gql("WHERE ANCESTOR IS :id",
-                                     id=snapshot.key())
+      if snapshot.status == "building":
+        # can't delete until snapshot is done
+        self.redirect(url + "?msg=DELETE_BUILDING")
+        return
 
-      for ent in task_entities:
-        ent.delete()
-
-      tasklist_entities = model.TaskList.gql("WHERE ANCESTOR IS :id",
-                                             id=snapshot.key())
-
-      for ent in tasklist_entities:
-        ent.delete()
-
-      snapshot.delete()
-
-      if not self.request.get("import"):
-        self.redirect("/snapshots")
-      else:
-        self.redirect("/import")
+      taskqueue.add(url="/worker/delete",
+                    params={"id": snapshot.key().id()})
+      self.redirect(url + "?msg=SNAPSHOT_DELETING")
 
 
 class DownloadHandler(webapp.RequestHandler):
@@ -213,7 +208,7 @@ class DownloadHandler(webapp.RequestHandler):
       self.redirect("/snapshots")
     else:
       if not self.request.get("id"):
-        self.redirect("/snapshots?error=NO_ID_EXPORT")
+        self.redirect("/snapshots?msg=NO_ID_EXPORT")
         return
       snapshot = model.Snapshot.gql("WHERE user = :user "
                                     "AND __key__ = KEY('Snapshot', :key)",
@@ -282,7 +277,7 @@ class ImportHandler(webapp.RequestHandler):
         titles.append((snapshot, title))
 
       template_values = {"snapshots": titles,
-                         "error": self.request.get("error"),
+                         "msg": self.request.get("msg"),
                          "refresh": refresh,
                          "logout_url": users.create_logout_url("/import")}
       self.response.out.write(template.render(path, template_values))
@@ -300,7 +295,7 @@ class ImportHandler(webapp.RequestHandler):
     if (not self.request.get("file") or
         not self.request.get("name") or
         not self.request.get("format")):
-      self.redirect("/import?error=REQUIRED_FIELD")
+      self.redirect("/import?msg=REQUIRED_FIELD")
       return
     snapshot = model.Snapshot()
     snapshot.type = "import"
@@ -318,7 +313,7 @@ class ImportHandler(webapp.RequestHandler):
                             "id": snapshot.key().id()})
     except taskqueue.TaskTooLargeError, e:
       logging.info(e, exc_info=True)
-      self.redirect("/import?error=FILE_TOO_LARGE")
+      self.redirect("/import?msg=FILE_TOO_LARGE")
       return
 
     self.redirect("/import")
@@ -335,7 +330,7 @@ class SendMailHandler(webapp.RequestHandler):
     else:
       path = os.path.join(os.path.dirname(__file__), "sendmail.html")
       template_values = {"id": self.request.get("id"),
-                         "error": self.request.get("error"),
+                         "msg": self.request.get("msg"),
                          "logout_url": users.create_logout_url("/sendmail")}
 
       self.response.out.write(template.render(path, template_values))
@@ -353,11 +348,11 @@ class SendMailHandler(webapp.RequestHandler):
       _RedirectForOAuth(self, user)
     else:
       if not self.request.get("id"):
-        self.redirect("/snapshots?error=NO_ID_EXPORT")
+        self.redirect("/snapshots?msg=NO_ID_EXPORT")
         return
       if (not self.request.get("email") or
           not self.request.get("subject")):
-        self.redirect("/sendmail?id=%s&error=REQUIRED_FIELD" %
+        self.redirect("/sendmail?id=%s&msg=REQUIRED_FIELD" %
                       urllib.quote_plus(self.request.get("id")))
         return
 

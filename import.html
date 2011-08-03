@@ -22,6 +22,9 @@ This is the Django template for importing tasks.
 {% if refresh %}
 <meta http-equiv="refresh" content="10">
 {% endif %}
+{% if msg == "SNAPSHOT_DELETING" %}
+<meta http-equiv="refresh" content="10;url=/import">
+{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -30,11 +33,23 @@ This is the Django template for importing tasks.
   you need to upload a larger quantity of data than that allows, we recommend
   that you break it down into groups based on some sort of category and upload
   the files separately.</p>
-  {% if error == "REQUIRED_FIELD" %}
+  {% if msg == "REQUIRED_FIELD" %}
   <p><b>You must fill out the form in order to import tasks.</b></p>
   {% endif %}
-  {% if error == "FILE_TOO_LARGE" %}
+  {% if msg == "FILE_TOO_LARGE" %}
   <p><b>File is larger than 100 KB.</b></p>
+  {% endif %}
+  {% if msg == "NO_ID_DELETE" %}
+  <p><b>You must specify a snapshot in order to delete it.</b></p>
+  {% endif %}
+  {% if msg == "INVALID_SNAPSHOT" %}
+  <p><b>The ID you specified does not correspond to an import.</b></p>
+  {% endif %}
+  {% if msg == "DELETE_BUILDING" %}
+  <p><b>You cannot delete an until it is done.</b></p>
+  {% endif %}
+  {% if msg == "SNAPSHOT_DELETING" %}
+  <p><b>Your snapshot is being deleted in the background.</b></p>
   {% endif %}
   {% if snapshots %}
   <p>Import Status:

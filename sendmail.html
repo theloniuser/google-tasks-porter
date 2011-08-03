@@ -21,7 +21,7 @@ This is the Django template for sending emails to Remember the Milk.
 
 {% block body %}
 <div class="break">
-  {% if error == "REQUIRED_FIELD" %}
+  {% if msg == "REQUIRED_FIELD" %}
   <p><b>You must fill out the form in order to send an import email to
     Remember the Milk.</b></p>
   {% endif %}

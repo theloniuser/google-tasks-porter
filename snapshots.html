@@ -21,19 +21,28 @@ This is the Django template for the snapshots listing page.
 {% if refresh %}
 <meta http-equiv="refresh" content="10">
 {% endif %}
+{% if msg == "SNAPSHOT_DELETING" %}
+<meta http-equiv="refresh" content="10;url=/snapshots">
+{% endif %}
 {% endblock %}
 {% block heading %}Your snapshots are listed below{% endblock %}
 
 {% block body %}
 <div class="break">
-  {% if error == "DELETE_BUILDING" %}
+  {% if msg == "DELETE_BUILDING" %}
   <p><b>You cannot delete a snapshot until it is done building.</b></p>
   {% endif %}
-  {% if error == "NO_ID_EXPORT" %}
+  {% if msg == "NO_ID_EXPORT" %}
   <p><b>You must specify a snapshot in order to export it.</b></p>
   {% endif %}
-  {% if error == "NO_ID_DELETE" %}
+  {% if msg == "NO_ID_DELETE" %}
   <p><b>You must specify a snapshot in order to delete it.</b></p>
+  {% endif %}
+  {% if msg == "INVALID_SNAPSHOT" %}
+  <p><b>The ID you specified does not correspond to a snapshot.</b></p>
+  {% endif %}
+  {% if msg == "SNAPSHOT_DELETING" %}
+  <p><b>Your snapshot is being deleted in the background.</b></p>
   {% endif %}
   <ul>
     {% if snapshots %}
