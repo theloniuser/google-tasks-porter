@@ -70,10 +70,12 @@ class MainHandler(webapp.RequestHandler):
     credentials = _GetCredentials()[1]
     path = os.path.join(os.path.dirname(__file__), "index.html")
     if not credentials or credentials.invalid:
-      template_values = {"is_authorized": False}
+      template_values = {"is_authorized": False,
+                         "logout_url": users.create_logout_url("/")}
       self.response.out.write(template.render(path, template_values))
     else:
-      template_values = {"is_authorized": True}
+      template_values = {"is_authorized": True,
+                         "logout_url": users.create_logout_url("/")}
       self.response.out.write(template.render(path, template_values))
 
 
@@ -122,7 +124,8 @@ class ListHandler(webapp.RequestHandler):
 
       template_values = {"snapshots": counts,
                          "error": self.request.get("error"),
-                         "refresh": refresh}
+                         "refresh": refresh,
+                         "logout_url": users.create_logout_url("/snapshots")}
       self.response.out.write(template.render(path, template_values))
 
 
@@ -280,7 +283,8 @@ class ImportHandler(webapp.RequestHandler):
 
       template_values = {"snapshots": titles,
                          "error": self.request.get("error"),
-                         "refresh": refresh}
+                         "refresh": refresh,
+                         "logout_url": users.create_logout_url("/import")}
       self.response.out.write(template.render(path, template_values))
 
   def post(self):
@@ -303,6 +307,8 @@ class ImportHandler(webapp.RequestHandler):
     snapshot.user = users.get_current_user()
     snapshot.status = "building"
     snapshot.put()
+
+    logging.info(snapshot.key().id())
 
     try:
       taskqueue.add(url="/worker/import",
@@ -329,7 +335,8 @@ class SendMailHandler(webapp.RequestHandler):
     else:
       path = os.path.join(os.path.dirname(__file__), "sendmail.html")
       template_values = {"id": self.request.get("id"),
-                         "error": self.request.get("error")}
+                         "error": self.request.get("error"),
+                         "logout_url": users.create_logout_url("/sendmail")}
 
       self.response.out.write(template.render(path, template_values))
 
