@@ -20,7 +20,12 @@ on: June 7, 2011
 version: 1.0beta2
 consisting of: apiclient, httplib2, oauth2client, uritemplate
 
-icalendar retrieved from: http://codespeak.net/icalendar/
-on: June 14, 2011
-version: 1.2
-consisting of: icalendar
+vobject retrieved from: http://vobject.skyhouseconsulting.com/history.html
+on: August 11, 2011
+version: 0.8.1c
+consisting of: vobject
+
+dateutil retrieved from: http://labix.org/python-dateutil
+on: August 11, 2011
+version: 1.5
+consisting of: dateutil

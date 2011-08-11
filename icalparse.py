@@ -19,8 +19,9 @@
 __author__ = "dwightguth@google.com (Dwight Guth)"
 
 import datetime
+import logging
 
-import icalendar
+import vobject
 
 import model
 
@@ -46,10 +47,10 @@ class Parser(object):
     Returns:
       The list of entities created by parsing vcal_data.
     """
-    vcal = icalendar.Calendar.from_string(vcal_data)
+    vcal = vobject.readOne(vcal_data)
     results = []
 
-    for todo in vcal.walk("vtodo"):
+    for todo in vcal.components():
       results.append(self.ParseItem(todo))
     return results
 
@@ -63,27 +64,29 @@ class Parser(object):
       The entity created by parsing item.
     """
 
+    logging.info(item)
+
     task = model.Task()
     if self.tasklist:
       task.parent_entity = self.tasklist
-    if "summary" in item:
-      task.title = icalendar.vText.from_ical(item["summary"].ical())
+    if "summary" in item.contents:
+      task.title = item.summary.value
     else:
       # we need a title so if it's not there we use the empty string
       task.title = ""
-    if "description" in item:
-      task.notes = icalendar.vText.from_ical(item["description"].ical())
-    if "due" in item:
-      due = icalendar.vDDDTypes.from_ical(item["due"].ical())
+    if "description" in item.contents:
+      task.notes = item.description.value
+    if "due" in item.contents:
+      due = item.due.value
       if isinstance(due, datetime.datetime):
         task.due = due.date()
       elif isinstance(due, datetime.date):
         task.due = due
-    if "completed" in item:
+    if "completed" in item.contents:
       # we don't use the status field because iCalendar doesn't always specify
       # it on completed tasks
       task.status = "completed"
-      task.completed = icalendar.vDDDTypes.from_ical(item["completed"].ical())
+      task.completed = item.completed.value
     else:
       task.status = "needsAction"
     task.put()
