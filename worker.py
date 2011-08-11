@@ -22,6 +22,7 @@ import logging
 
 from apiclient import discovery
 from apiclient.oauth2client import appengine
+from apiclient.oauth2client import client
 
 from google.appengine.api import apiproxy_stub_map
 from google.appengine.ext import webapp
@@ -109,6 +110,11 @@ class SnapshotWorker(webapp.RequestHandler):
           parser.ParseAndStore(tasks_list)
         snapshot.status = "completed"
         snapshot.put()
+      except client.AccessTokenRefreshError, e:
+        snapshot.status = "error"
+        snapshot.errorMessage = "OAuth credentials were revoked."
+        logging.info(e, exc_info=True)
+        snapshot.put()
       except Exception, e:
         snapshot.status = "error"
         snapshot.errorMessage = "Snapshot creation process failed unexpectedly."
@@ -175,6 +181,11 @@ class ImportWorker(webapp.RequestHandler):
                                       previous=apiupload.PREVIOUS_ARGUMENT)
         uploader.Upload(tasks_list)
         snapshot.status = "completed"
+        snapshot.put()
+      except client.AccessTokenRefreshError, e:
+        snapshot.status = "error"
+        snapshot.errorMessage = "OAuth credentials were revoked."
+        logging.info(e, exc_info=True)
         snapshot.put()
       except Exception, e:
         snapshot.status = "error"

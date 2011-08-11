@@ -23,6 +23,7 @@ import os
 import pickle
 import urllib
 
+from apiclient import discovery
 from apiclient.oauth2client import appengine
 from apiclient.oauth2client import client
 
@@ -34,6 +35,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp import util
 
+import httplib2
 
 import model
 import settings
@@ -59,6 +61,23 @@ def _GetCredentials():
   user = users.get_current_user()
   credentials = appengine.StorageByKeyName(
       model.Credentials, user.user_id(), "credentials").get()
+
+  # so it turns out that the method that checks if the credentials are okay
+  # doesn't give the correct answer unless you try to refresh it.  So we do that
+  # here in order to make sure that the credentials are valid before being
+  # passed to a worker.  Obviously if the user revokes the credentials after
+  # this point we will continue to get an error, but we can't stop that.
+
+  if credentials and not credentials.invalid:
+    try:
+      http = httplib2.Http()
+      http = credentials.authorize(http)
+      service = discovery.build("tasks", "v1", http)
+      tasklists = service.tasklists()
+      tasklists_list = tasklists.list().execute()
+    except:
+      credentials = None
+
   return user, credentials
 
 
