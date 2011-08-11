@@ -90,10 +90,12 @@ class MainHandler(webapp.RequestHandler):
     path = os.path.join(os.path.dirname(__file__), "index.html")
     if not credentials or credentials.invalid:
       template_values = {"is_authorized": False,
+                         "msg": self.request.get("msg"),
                          "logout_url": users.create_logout_url("/")}
       self.response.out.write(template.render(path, template_values))
     else:
       template_values = {"is_authorized": True,
+                         "msg": self.request.get("msg"),
                          "logout_url": users.create_logout_url("/")}
       self.response.out.write(template.render(path, template_values))
 
@@ -410,10 +412,18 @@ class OAuthHandler(webapp.RequestHandler):
     user = users.get_current_user()
     flow = pickle.loads(memcache.get(user.user_id()))
     if flow:
-      credentials = flow.step2_exchange(self.request.params)
+      error = False
+      try:
+        credentials = flow.step2_exchange(self.request.params)
+      except client.FlowExchangeError, e:
+        credentials = None
+        error = True
       appengine.StorageByKeyName(
           model.Credentials, user.user_id(), "credentials").put(credentials)
-      self.redirect(self.request.get("state"))
+      if error:
+        self.redirect("/?msg=ACCOUNT_ERROR")
+      else:
+        self.redirect(self.request.get("state"))
 
 
 def main():

@@ -65,14 +65,20 @@ This is the Django template for the landing page.
           iCalendar or Outlook.
         </div>
         <div class="break">
-          {% if is_authorized %}
-          Thanks for granting us permission.  Don't worry: you can always
-          <a href="https://www.google.com/accounts/IssuedAuthSubTokens">revoke</a>
-          this permission at any time.
+          {% if msg == "ACCOUNT_ERROR" %}
+            An error occurred authorizing your account.  This could be because
+            your account is not currently in good standing with Google.  If this
+            is not the case, please contact us so we can investigate this issue.
           {% else %}
-          In order to do this, it asks for permission to view and manage your
-          Google Tasks data.  Don't worry: you can always revoke this permission
-          later.  We will not modify any of your pre-existing task lists.
+            {% if is_authorized %}
+              Thanks for granting us permission.  Don't worry: you can always
+              <a href="https://www.google.com/accounts/IssuedAuthSubTokens">revoke</a>
+              this permission at any time.
+            {% else %}
+              In order to do this, it asks for permission to view and manage your
+              Google Tasks data.  Don't worry: you can always revoke this permission
+              later.  We will not modify any of your pre-existing task lists.
+            {% endif %}
           {% endif %}
         </div>
         {% if is_authorized %}
