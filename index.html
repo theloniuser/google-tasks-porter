@@ -33,7 +33,7 @@ This is the Django template for the landing page.
       window.location.href = "/auth";
     }
 
-    function import() {
+    function importRedirect() {
       window.location.href = "/import";
     }
   </script>
@@ -99,7 +99,7 @@ This is the Django template for the landing page.
         <button class="button" type="button" onclick="save();">Take Snapshot</button>
       </td>
       <td class="button-middle">
-        <button class="button" type="button" onclick="import();">Import
+        <button class="button" type="button" onclick="importRedirect();">Import
           Tasks</button>
       <td class="button-right">
         <button class="button" type="button" onclick="restore();">View Snapshots</button>
